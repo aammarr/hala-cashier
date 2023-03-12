@@ -32,18 +32,21 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'catalog_id'       => 'required|min:5',
-            'customer_name' => 'required|min:5',
-            'price' => 'required|min:5'
+            'user_id'       => 'required',
+            'catalog_id'    => 'required',
+            'quantity'      => 'required',
+            'price'         => 'required'
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
 
         try {
             $Order    = Order::create([
+                'user_id'       => $request->user_id,
                 'catalog_id'    => $request->catalog_id,
-                'customer_name' => $request->customer_name,
-                'price'         => $request->price
+                'quantity'      => $request->quantity,
+                'price'         => $request->price,
+                'total_price'   => $request->quantity * $request->price
             ]);
             $success = new OrderResource($Order);
             $message = 'Yay! A Order has been successfully created.';
@@ -80,18 +83,22 @@ class OrderController extends Controller
     public function update(Request $request, Order $Order)
     {
         $validator = Validator::make($request->all(), [
+            'user_id'       => $request->user_id,
             'catalog_id'    => $request->catalog_id,
-            'customer_name' => $request->customer_name,
-            'price'         => $request->price
+            'quantity'      => $request->quantity,
+            'price'         => $request->price,
+            'total_price'   => $request->total_price
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
 
         try {
 
-            $Order->catalog_id       = $request->catalog_id;
-            $Order->customer_name = $request->customer_name;
-            $Order->price = $request->price;
+            $Order->user_id     = $request->user_id;
+            $Order->catalog_id  = $request->catalog_id;
+            $Order->quantity    = $request->quantity;
+            $Order->price       = $request->price;
+            $Order->total_price = $request->total_price;
             $Order->save();
 
             $success = new OrderResource($Order);

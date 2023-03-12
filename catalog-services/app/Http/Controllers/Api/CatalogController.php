@@ -33,7 +33,8 @@ class CatalogController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'       => 'required|min:5',
-            'description' => 'required|min:5'
+            'description' => 'required|min:5',
+            'price'       => 'required'
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
@@ -41,7 +42,8 @@ class CatalogController extends Controller
         try {
             $Catalog    = Catalog::create([
                 'title'       => $request->title,
-                'description' => $request->description
+                'description' => $request->description,
+                'price'       => $request->price
             ]);
             $success = new CatalogResource($Catalog);
             $message = 'Yay! A Catalog has been successfully created.';
@@ -79,7 +81,8 @@ class CatalogController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'       => 'required|min:5',
-            'description' => 'required|min:5'
+            'description' => 'required|min:5',
+            'price'       => 'required'
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
@@ -87,6 +90,7 @@ class CatalogController extends Controller
         try {
             $Catalog->title       = $request->title;
             $Catalog->description = $request->description;
+            $Catalog->price       = $request->price;
             $Catalog->save();
 
             $success = new CatalogResource($Catalog);
