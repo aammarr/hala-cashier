@@ -35,18 +35,21 @@ class OrderController extends Controller
             'user_id'       => 'required',
             'catalog_id'    => 'required',
             'quantity'      => 'required',
-            'price'         => 'required'
+            'price'         => 'required',
+            'payment_method'=> 'required'
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
 
         try {
             $Order    = Order::create([
-                'user_id'       => $request->user_id,
-                'catalog_id'    => $request->catalog_id,
-                'quantity'      => $request->quantity,
-                'price'         => $request->price,
-                'total_price'   => $request->quantity * $request->price
+                'user_id'           => $request->user_id,
+                'catalog_id'        => $request->catalog_id,
+                'quantity'          => $request->quantity,
+                'price'             => $request->price,
+                'total_price'       => $request->quantity * $request->price,
+                'payment_method'    => $request->payment_method,
+                'order_status'      => 'pending'
             ]);
             $success = new OrderResource($Order);
             $message = 'Yay! A Order has been successfully created.';
@@ -83,11 +86,13 @@ class OrderController extends Controller
     public function update(Request $request, Order $Order)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'       => $request->user_id,
-            'catalog_id'    => $request->catalog_id,
-            'quantity'      => $request->quantity,
-            'price'         => $request->price,
-            'total_price'   => $request->total_price
+            'user_id'           => $request->user_id,
+            'catalog_id'        => $request->catalog_id,
+            'quantity'          => $request->quantity,
+            'price'             => $request->price,
+            'total_price'       => $request->total_price,
+            'payment_method'    => $request->payment_method,
+            'order_status'      => 'pending'
         ]);
 
         if ($validator->fails()) return sendError('Validation Error.', $validator->errors(), 422);
